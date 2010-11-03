@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <style>@import url(index.css);</style>
+    </head>
+    <body>
+        <div id="body">
+            <div class="horizon">
+                <div id="deadcentre">
+                    <div class="content">
+
+                        <p class="encounter">
+                            <img id="tale" src="art/world.png" height="360" width="360" alt="Dya is a cube.">
+                        </p>
+
+                        <h1>Tale</h1>
+
+                        <p class="encounter">You encounter Tale<sup><abbr title="alpha">&alpha;</abbr></sup>.</p>
+
+                        <div id="buffer"></div>
+
+                        <p class="menu">
+                            <a id="play" class="choice" href="noscript.html">Play</a>
+                            <a class="choice" href="http://www.cafepress.com/taleshoppe">Shop</a>
+                            <a class="choice" href="http://groups.google.com/group/tale-fan">Talk</a>
+                            <a class="choice" href="https://cixar.com/tale/wiki/">Wiki</a>
+                            <a class="choice" href="http://en.wikipedia.org/wiki/Special:Random">Flee</a>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+            <div id="hudHorizon">
+                <div id="hud">
+                    <div id="left">
+                        <div id="ad"></div>
+                        <div id="widgetBar"></div>
+                    </div>
+                    <div id="right">
+                        <div id="map"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="horizon">
+            <div id="music"></div>
+        </div>
+        <script>
+            (function () {
+                var load = function (href) {
+                    var script = document.createElement("script");
+                    script.src = href;
+                    document.body.appendChild(script);
+                };
+                var play = document.getElementById('play');
+                play.onclick = function () {
+                    play.onclick = function () {
+                        return false;
+                    };
+                    load('/play.js');
+                    return false;
+                };
+                play.focus();
+            })();
+        </script>
+    </body>
+</html>

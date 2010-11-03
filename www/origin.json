@@ -1,0 +1,10 @@
+{
+    "id": "origin",
+    "type": "room",
+    "description": "It is dark.  You are very likely to be eaten by a Grue.",
+    "exits": {
+        "in": {
+            "href": "#origin"
+        }
+    }
+}
