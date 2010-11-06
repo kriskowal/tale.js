@@ -16,7 +16,8 @@ var app = JAQUE.Branch({
         "www/js/jquery-1.4.3.min.js",
         "www/js/socket.io.js",
         "www/js/play.js"
-    ], 'application/javascript')
+    ], 'application/javascript'),
+    "world": JAQUE.FileTree("world")
 }, JAQUE.FileTree("www"))
 
 var server = HTTP.Server(JAQUE.Decorators([
@@ -44,28 +45,27 @@ var Comm = function (server, connect) {
 };
 
 Q.when(server.listen(port), function () {
-    console.log("Listining on " + port);
-});
+    console.log("Server listining on " + port);
+    return Q.when(world.start(), function (worldRunner) {
+        console.log("World started.");
 
-Q.when(world.start(), function (worldRunner) {
-    console.log("World started.");
+        Comm(webSocket, world.connect);
 
-    Comm(webSocket, world.connect);
-
-    var siginted;
-    PROCESS.on("SIGINT", function () {
-        if (siginted)
-            throw new Error("Force-stopped.");
-        siginted = true;
-        worldRunner.stop();
-    });
-
-    return Q.when(worldRunner.stopped, function () {
-        console.log("World stopped");
-        Q.when(server.stop(), function () {
-            console.log("Server stopped");
+        var siginted;
+        PROCESS.on("SIGINT", function () {
+            if (siginted)
+                throw new Error("Force-stopped.");
+            siginted = true;
+            worldRunner.stop();
         });
-    });
 
-});
+        return Q.when(worldRunner.stopped, function () {
+            console.log("World stopped");
+            return Q.when(server.stop(), function () {
+                console.log("Server stopped");
+            });
+        });
+
+    });
+}, Q.error);
 

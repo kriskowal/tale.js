@@ -6,8 +6,7 @@ var UTIL = require("n-util");
 var CHIRON = require("chiron");
 var URL = require("url");
 
-var world = exports.world = {
-};
+var world = exports.world = {};
 
 world.connect = function (channel) {
     var queue = Q.Queue();
@@ -16,8 +15,8 @@ world.connect = function (channel) {
     var location;
 
     function go(_location) {
-        location = _location;
         return Q.when(HTTP.read(location), function (content) {
+            location = _location;
             room = JSON.parse(content);
             channel.send(room.description);
             if (room.exits) {
@@ -26,6 +25,8 @@ world.connect = function (channel) {
                     UTIL.keys(room.exits).join(", ")
                 );
             }
+        }, function (reason) {
+            channel.send("This location does not appear to exist.");
         });
     }
 
