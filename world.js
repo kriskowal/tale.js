@@ -37,8 +37,7 @@ world.connect = function (channel) {
         });
     }
 
-    go("http://localhost:8080/world/dya.json");
-
+    go("http://localhost/world/dya.json");
     var loop = Q.loop(channel.receive, function (message) {
         if (UTIL.has(room.exits, message)) {
             go(URL.resolve(location, room.exits[message].href));
