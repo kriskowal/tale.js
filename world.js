@@ -15,28 +15,36 @@ world.connect = function (channel) {
     var location;
 
     function go(_location) {
-        return Q.when(HTTP.read(location), function (content) {
-            location = _location;
-            room = JSON.parse(content);
-            channel.send(room.description);
-            if (room.exits) {
+        return Q.when(HTTP.read(_location), function (content) {
+            _room = JSON.parse(content);
+            var description = _room.description;
+            if (_room.name)
+                description =
+                    "<h2>" + _room.name + "</h2>" +
+                    "<p>" + description + "</p>";
+            channel.send(description);
+            if (_room.exits) {
                 channel.send(
-                    "There are exits: " +
-                    UTIL.keys(room.exits).join(", ")
+                    "<p>There are exits: " +
+                    UTIL.keys(_room.exits).join(", ") +
+                    ".</p>"
                 );
             }
+            location = _location;
+            room = _room;
         }, function (reason) {
-            channel.send("This location does not appear to exist.");
+            channel.send("<p>This location does not appear to exist.</p>");
         });
     }
 
-    go("http://localhost:8080/origin.json");
+    go("http://localhost:8080/world/dya.json");
+
     var loop = Q.loop(channel.receive, function (message) {
         if (UTIL.has(room.exits, message)) {
             go(URL.resolve(location, room.exits[message].href));
-            channel.send("You go " + message);
+            channel.send("<p>You go " + message + ".</p>");
         } else {
-            channel.send("Huh?");
+            channel.send("<p>Huh?</p>");
         }
     });
 

@@ -1,9 +1,22 @@
 {
     "type": "room",
+    "name": "Borea",
     "description": "",
     "exits": {
-        "": {
-            "href": "#"
+        "north": {
+            "href": "dysia.json"
+        },
+        "south": {
+            "href": "euia.json"
+        },
+        "west": {
+            "href": "oria.json"
+        },
+        "east": {
+            "href": "occia.json"
+        },
+        "up": {
+            "href": "dya.json"
         }
     }
 }

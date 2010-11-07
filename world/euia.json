@@ -1,9 +1,22 @@
 {
     "type": "room",
+    "name": "Euia",
     "description": "",
     "exits": {
-        "": {
-            "href": "#"
+        "north": {
+            "href": "borea.json"
+        },
+        "south": {
+            "href": "austra.json"
+        },
+        "west": {
+            "href": "oria.json"
+        },
+        "east": {
+            "href": "occia.json"
+        },
+        "up": {
+            "href": "dya.json"
         }
     }
 }

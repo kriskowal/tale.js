@@ -1,9 +1,22 @@
 {
     "type": "room",
+    "name": "Austra",
     "description": "",
     "exits": {
-        "": {
-            "href": "#"
+        "north": {
+            "href": "euia.json"
+        },
+        "south": {
+            "href": "dysia.json"
+        },
+        "west": {
+            "href": "oria.json"
+        },
+        "east": {
+            "href": "occia.json"
+        },
+        "up": {
+            "href": "dya.json"
         }
     }
 }

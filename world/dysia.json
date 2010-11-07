@@ -1,9 +1,22 @@
 {
     "type": "room",
+    "name": "Dysia",
     "description": "",
     "exits": {
-        "": {
-            "href": "#"
+        "north": {
+            "href": "borea.json"
+        },
+        "south": {
+            "href": "austra.json"
+        },
+        "west": {
+            "href": "occia.json"
+        },
+        "east": {
+            "href": "oria.json"
+        },
+        "up": {
+            "href": "dya.json"
         }
     }
 }

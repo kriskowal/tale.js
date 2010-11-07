@@ -45,7 +45,7 @@ var Comm = function (server, connect) {
 };
 
 Q.when(server.listen(port), function () {
-    console.log("Server listining on " + port);
+    console.log("Server listening on " + port);
     return Q.when(world.start(), function (worldRunner) {
         console.log("World started.");
 

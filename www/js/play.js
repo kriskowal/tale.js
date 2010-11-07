@@ -35,7 +35,7 @@
     var buffer = $("#buffer");
     function log(message) {
         before();
-        buffer.append("<p>" + message + "</p>");
+        buffer.append(message);
         after();
     }
 

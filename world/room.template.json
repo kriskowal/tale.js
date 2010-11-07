@@ -1,5 +1,6 @@
 {
     "type": "room",
+    "name": "",
     "description": "",
     "exits": {
         "": {

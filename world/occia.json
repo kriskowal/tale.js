@@ -1,9 +1,22 @@
 {
     "type": "room",
+    "name": "Occia",
     "description": "",
     "exits": {
-        "": {
-            "href": "#"
+        "north": {
+            "href": "borea.json"
+        },
+        "south": {
+            "href": "austra.json"
+        },
+        "west": {
+            "href": "euia.json"
+        },
+        "east": {
+            "href": "dysia.json"
+        },
+        "up": {
+            "href": "dya.json"
         }
     }
 }

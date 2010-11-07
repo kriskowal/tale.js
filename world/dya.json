@@ -1,9 +1,25 @@
 {
     "type": "room",
-    "description": "",
+    "name": "Dya",
+    "description": "From the vantage of Dyo, you gaze upon Dya, a world of six faces.",
     "exits": {
-        "": {
-            "href": "#"
+        "euia": {
+            "href": "euia.json"
+        },
+        "occia": {
+            "href": "occia.json"
+        },
+        "borea": {
+            "href": "borea.json"
+        },
+        "austra": {
+            "href": "austra.json"
+        },
+        "oria": {
+            "href": "oria.json"
+        },
+        "dysia": {
+            "href": "dysia.json"
         }
     }
 }

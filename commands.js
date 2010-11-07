@@ -4,10 +4,6 @@ var UTIL = require("n-util");
 var HTML = require(""); // XXX
 var readCommand = require("./parse").readCommand;
 
-exports.noSuchCommand = function () {
-    return Q.reject("No such command");
-};
-
 exports.Branch = function (commands, nextHandler) {
     nextHandler = nextHandler || exports.noSuchCommand;
     return function (context, command) {
@@ -18,6 +14,10 @@ exports.Branch = function (commands, nextHandler) {
             return nextHandler(context, command);
         }
     };
+};
+
+exports.noSuchCommand = function () {
+    return Q.reject("No such command");
 };
 
 function main() {

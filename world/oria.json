@@ -1,9 +1,22 @@
 {
     "type": "room",
+    "name": "Oria",
     "description": "",
     "exits": {
-        "": {
-            "href": "#"
+        "north": {
+            "href": "borea.json"
+        },
+        "south": {
+            "href": "austra.json"
+        },
+        "west": {
+            "href": "dysia.json"
+        },
+        "east": {
+            "href": "euia.json"
+        },
+        "up": {
+            "href": "dya.json"
         }
     }
 }
