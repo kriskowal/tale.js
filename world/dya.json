@@ -1,7 +1,7 @@
 {
     "type": "room",
     "name": "Dya",
-    "description": "From the vantage of Dyo, you gaze upon Dya, a world of six faces.",
+    "description": "From the vantage of Dyo the Twenty-sid&egrave;d, you gaze upon Dya, a world of six faces. The lands of light form one hemicube, and the lands of tint lie in opposition.",
     "exits": {
         "euia": {
             "href": "euia.json"

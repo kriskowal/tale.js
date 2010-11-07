@@ -8,32 +8,47 @@ var URL = require("url");
 
 var world = exports.world = {};
 
+var genesis = {
+    "description": "You find yourself in a protogenic place, a room that has not been created, or cannot be found.",
+    "exits": {
+        "back": {
+            "href": "#"
+        }
+    }
+};
+
 world.connect = function (channel) {
     var queue = Q.Queue();
 
     var room;
     var location;
 
+    function describe() {
+        var description = room.description;
+        if (room.name)
+            description =
+                "<h2>" + room.name + "</h2>" +
+                "<p>" + description + "</p>";
+        channel.send(description);
+        if (room.exits) {
+            channel.send(
+                "<p>There are exits: " +
+                UTIL.keys(room.exits).join(", ") +
+                ".</p>"
+            );
+        }
+    }
+
     function go(_location) {
         return Q.when(HTTP.read(_location), function (content) {
             _room = JSON.parse(content);
-            var description = _room.description;
-            if (_room.name)
-                description =
-                    "<h2>" + _room.name + "</h2>" +
-                    "<p>" + description + "</p>";
-            channel.send(description);
-            if (_room.exits) {
-                channel.send(
-                    "<p>There are exits: " +
-                    UTIL.keys(_room.exits).join(", ") +
-                    ".</p>"
-                );
-            }
             location = _location;
             room = _room;
+            describe();
         }, function (reason) {
-            channel.send("<p>This location does not appear to exist.</p>");
+            console.error(reason);
+            room = genesis;
+            describe();
         });
     }
 
@@ -43,6 +58,9 @@ world.connect = function (channel) {
         if (UTIL.has(room.exits, message)) {
             go(URL.resolve(location, room.exits[message].href));
             channel.send("<p>You go " + message + ".</p>");
+        } else if (message === "l" || message === "look") {
+            channel.send("<p>You take another look&hellip;</p>");
+            go(location);
         } else {
             channel.send("<p>Huh?</p>");
         }

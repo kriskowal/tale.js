@@ -28,7 +28,7 @@ var server = HTTP.Server(JAQUE.Decorators([
 
 var webSocket = SOCKET.listen(server.nodeServer);
 
-var Comm = function (server, connect) {
+var connect = function (server, connect) {
     server.on('connection', function (client) {
         var q = Q.Queue();
         var disconnected = Q.defer();
@@ -49,7 +49,7 @@ Q.when(server.listen(port), function () {
     return Q.when(world.start(), function (worldRunner) {
         console.log("World started.");
 
-        Comm(webSocket, world.connect);
+        connect(webSocket, world.connect);
 
         var siginted;
         PROCESS.on("SIGINT", function () {

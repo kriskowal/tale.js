@@ -13,7 +13,7 @@
             log(message);
         });
         socket.on('disconnect', function () {
-            log("Tale has disconnected.");
+            log("<p>Tale has disconnected.</p>");
         });
 
         $.get("command.frag.html", function (frag) {
