@@ -1,8 +1,12 @@
 {
     "type": "room",
     "name": "Euia",
-    "description": "",
+    "description": "From the lofty airs of Euia, you observe its primary feature: the Euials. The Euials are mountains to the north and south, marching from east to west, forming between them the Green Vale, with its capital city of U at its heart.",
     "exits": {
+        "east": {
+            "href": "occia.json",
+            "aliases": ["next", "occia"]
+        },
         "north": {
             "href": "borea.json"
         },
@@ -11,9 +15,6 @@
         },
         "west": {
             "href": "oria.json"
-        },
-        "east": {
-            "href": "occia.json"
         },
         "up": {
             "href": "dya.json"

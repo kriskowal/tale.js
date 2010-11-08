@@ -1,13 +1,13 @@
 {
     "type": "room",
     "name": "Borea",
-    "description": "",
+    "description": "Beneath you is the fortified ice of Borea amid four towering mountains in its Four corners and fenc&egrave;d by the crenelated saddle-slopes between. At the center of Borea is the North Pole, the Red candy-strip&egrave;d citadel of mad Magus Borealis. At the base of the southern slopes, the ice crumbles into the Boreal Sea, the only safe port to or from Borea.",
     "exits": {
-        "north": {
-            "href": "dysia.json"
-        },
         "south": {
             "href": "euia.json"
+        },
+        "north": {
+            "href": "dysia.json"
         },
         "west": {
             "href": "oria.json"

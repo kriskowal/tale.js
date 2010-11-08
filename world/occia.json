@@ -1,16 +1,17 @@
 {
     "type": "room",
     "name": "Occia",
-    "description": "",
+    "description": "The seas of Occia wash the shores of the five blue mushroom-forest&egrave;d isles beneath you. The waters of Euia spill in from the west, flow north into the frozen Ice Bay of Borea, flood southward into the salty seas of Austra, and trickle over the eastern edge of the world into the chasm of Dys.",
     "exits": {
         "north": {
-            "href": "borea.json"
-        },
-        "south": {
-            "href": "austra.json"
+            "href": "borea.json",
+            "aliases": ["next", "borea"]
         },
         "west": {
             "href": "euia.json"
+        },
+        "south": {
+            "href": "austra.json"
         },
         "east": {
             "href": "dysia.json"
