@@ -5,17 +5,30 @@ var UTIL = require("n-util");
 //var Cache = require("chiron/cache").Cache;
 var CHIRON = require("chiron");
 var URL = require("url");
+var HTML = require("./html");
 
 var world = exports.world = {};
 
-var genesis = {
-    "description": "You find yourself in a protogenic place, a room that has not been created, or cannot be found.",
+function Room(room) {
+    var exits = room.allExits = {};
+    UTIL.forEachApply(room.exits || {}, function (direction, exit) {
+        exits[direction] = exit;
+        (exit.aliases || []).forEach(function (direction) {
+            exits[direction] = exit;
+        });
+    });
+    return room;
+}
+
+var genesis = Room({
+    "description": "You pass through a rift in the fabric of the world into " +
+    "a void, a place that should exist but does not.",
     "exits": {
         "back": {
-            "href": "#"
+            "href": ""
         }
     }
-};
+});
 
 world.connect = function (channel) {
     var queue = Q.Queue();
@@ -41,10 +54,16 @@ world.connect = function (channel) {
 
     function go(_location) {
         return Q.when(HTTP.read(_location), function (content) {
-            _room = JSON.parse(content);
-            location = _location;
-            room = _room;
-            describe();
+            try {
+                _room = JSON.parse(content);
+                location = _location;
+                room = Room(_room);
+                describe();
+            } catch (exception) {
+                room = genesis;
+                describe();
+                throw exception;
+            }
         }, function (reason) {
             console.error(reason);
             room = genesis;
@@ -52,16 +71,16 @@ world.connect = function (channel) {
         });
     }
 
-    go("http://localhost/world/dya.json");
+    go("http://localhost:8080/world/dya.json");
     var loop = Q.loop(channel.receive, function (message) {
-        if (UTIL.has(room.exits, message)) {
-            go(URL.resolve(location, room.exits[message].href));
+        if (UTIL.has(room.allExits, message)) {
+            go(URL.resolve(location, room.allExits[message].href));
             channel.send("<p>You go " + message + ".</p>");
         } else if (message === "l" || message === "look") {
             channel.send("<p>You take another look&hellip;</p>");
             go(location);
         } else {
-            channel.send("<p>Huh?</p>");
+            channel.send("<p>Huh? I don't understand " + JSON.stringify(HTML.escape(message)) + ".</p>");
         }
     });
 
@@ -88,9 +107,6 @@ world.start = function () {
         },
         "stopped": stopping.promise
     }
-};
-
-var Room = function () {
 };
 
 var Mob = function () {

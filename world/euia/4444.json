@@ -1,0 +1,10 @@
+{
+    "type": "room",
+    "name": "Tower of U",
+    "description": "The Tower of U is the home of Princess Dya, regent of the realm. The main gate is to the east.",
+    "exits": {
+        "up": {
+            "href": "444.json"
+        }
+    }
+}

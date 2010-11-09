@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "The Hall of the North Pole",
+    "description": "Deep within the Tower of the North, you find the central chamber with the throne of Magus Borealis the Chaotic Nice. Rumor reports that the North and South poles are actually a single Axle about which the whole world of Tale spins, and that there is a passage that connects them.",
+    "exits": {
+        "trapdoor": {
+            "href": "../austra/south-pole.json"
+        },
+        "up": {
+            "href": "444.json"
+        }
+    }
+}

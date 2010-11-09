@@ -1,0 +1,10 @@
+{
+    "type": "room",
+    "name": "The Hall of the South Pole",
+    "description": "Deep within the Tower of the North, you find the central chamber with the workshop of Magus Australis the Chaotic Naughty. Rumor reports that the South and North poles are actually a single Axle about which the whole world of Tale spins, and that there is a passage that connects them.",
+    "exits": {
+        "trapdoor": {
+            "href": "../borea/north-pole.json"
+        }
+    }
+}

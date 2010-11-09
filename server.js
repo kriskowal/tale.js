@@ -7,7 +7,7 @@ var FS = require("q-fs");
 var JAQUE = require("jaque");
 var world = require("./world").world;
 
-var port = 80;
+var port = PROCESS.argv[2] || 80;
 
 var app = JAQUE.Branch({
     "": JAQUE.File("www/index.html"),

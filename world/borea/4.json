@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "Ice Valley",
+    "description": "You look over the Ice Valley of Borea, a desert of ice patrolled by the Elfs of Magus Borealis and guarded by the cold.  At its center is the North Pole. Paths hidden by drifts of snow lead in all directions, the least perilous being the low shoulder of the southern mountains, to Occia.",
+    "exits": {
+        "down": {
+            "href": "44.json"
+        },
+        "up": {
+            "href": "../borea.json"
+        }
+    }
+}

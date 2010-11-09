@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "The Province of U",
+    "description": "You look over the Province of U, an orderly country of farmland around the wall&egrave;d Citadel of U. The rivers of the western and central mountains of Euia converge within the city, flowing out and eastward as the looping river of Doubleuu.",
+    "exits": {
+        "down": {
+            "href": "44.json"
+        },
+        "up": {
+            "href": "../euia.json"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "The Boreal State",
+    "description": "You look over the only inhabited region of Borea, the North Pole and it surround.  This is the Reign of the Elfs and the Realm of Deer.",
+    "exits": {
+        "down": {
+            "href": "444.json"
+        },
+        "up": {
+            "href": "4.json"
+        }
+    }
+}

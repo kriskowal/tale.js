@@ -1,19 +1,26 @@
 {
     "type": "room",
     "name": "Borea",
-    "description": "Beneath you is the fortified ice of Borea amid four towering mountains in its Four corners and fenc&egrave;d by the crenelated saddle-slopes between. At the center of Borea is the North Pole, the Red candy-strip&egrave;d citadel of mad Magus Borealis. At the base of the southern slopes, the ice crumbles into the Boreal Sea, the only safe port to or from Borea.",
+    "description": "Beneath you is the fortified ice of Borea amid four towering mountains in its Four corners and fenc&egrave;d by the crenellated saddle-slopes between. At the center of Borea is the North Pole, the Red candy-strip&egrave;d citadel of mad Magus Borealis. At the base of the southern slopes, the ice crumbles into the Boreal Sea, the only safe port to or from Borea.",
     "exits": {
-        "south": {
-            "href": "euia.json"
+        "down": {
+            "href": "borea/4.json"
         },
-        "north": {
-            "href": "dysia.json"
+        "euia": {
+            "href": "euia.json",
+            "aliases": ["south"]
         },
-        "west": {
-            "href": "oria.json"
+        "dysia": {
+            "href": "dysia.json",
+            "aliases": ["north"]
         },
-        "east": {
-            "href": "occia.json"
+        "oria": {
+            "href": "oria.json",
+            "aliases": ["west"]
+        },
+        "occia": {
+            "href": "occia.json",
+            "aliases": ["east"]
         },
         "up": {
             "href": "dya.json"
