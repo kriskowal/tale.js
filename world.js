@@ -30,7 +30,7 @@ var genesis = Room({
     }
 });
 
-world.connect = function (channel) {
+world.connect = function (channel, startUrl) {
     var queue = Q.Queue();
 
     var room;
@@ -71,7 +71,7 @@ world.connect = function (channel) {
         });
     }
 
-    go("http://localhost:8080/world/dya.json");
+    go(startUrl);
     var loop = Q.loop(channel.receive, function (message) {
         if (UTIL.has(room.allExits, message)) {
             go(URL.resolve(location, room.allExits[message].href));
