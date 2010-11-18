@@ -164,10 +164,12 @@ world.start = function () {
     var running = true;
     var stopping = Q.defer();
     function run() {
+        /*
         if (running) {
             world.tick();
             setTimeout(run, 1000);
         }
+        */
     }
     Q.enqueue(run);
     return {
