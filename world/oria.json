@@ -2,6 +2,7 @@
     "type": "room",
     "name": "Oria",
     "description": "Beneath you are the Two vulcan peaks of Oria: Oria Majoris to the north-west, and Minoris to the south-east. Acrid ash wafts over the Yellow desert plains, and two rivers of molten stone meet and flow down into Dysia to the west.",
+    "image": "/art/oria.png",
     "exits": {
         "west": {
             "href": "dysia.json"

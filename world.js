@@ -41,11 +41,11 @@ world.connect = function (channel, startUrl) {
     var location;
 
     function describe() {
-        var description = room.description;
+        var description = '<p>' + room.description + '</p>';
+        if (room.image)
+            description = '<img src="' + room.image + '" align="right" height="200" width="200">' + description;
         if (room.name)
-            description =
-                "<h2>" + room.name + "</h2>" +
-                "<p>" + description + "</p>";
+            description = "<h2>" + room.name + "</h2>" + description;
         channel.send(description);
         if (room.exits) {
             channel.send(

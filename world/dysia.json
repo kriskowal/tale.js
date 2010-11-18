@@ -2,6 +2,7 @@
     "type": "room",
     "name": "Dysia",
     "description": "The one dominant feature of Dysia, a gaping maw, hangs open beneath you. A river from Occia trickles in from the west and a river of molten lava tumbles from the east. These two rivers spiral into the successive rings of the pit-city of Dys directly beneath you, and a choking Purple smog clouds their meeting.",
+    "image": "/art/dysia.png",
     "exits": {
         "east": {
             "href": "oria.json"
