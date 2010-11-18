@@ -1,6 +1,50 @@
 
-Setup
-=====
+Demo
+====
+
+    There is a running demo at <http://tale.gg>.  Click
+    "Play" (which will be focused when you load the page, so
+    you can just press "Enter").  Once you're in the game,
+    you can type commands like, but not limited to, the
+    names of exits in your room.
+
+
+Build Your Own World
+====================
+
+    As you travel the world, the game server fetches
+    JSON format files that describe each room.
+    These files can be placed anywhere on the web,
+    like <http://tale.gg/world/dya.json>.  They
+    look like this:
+
+    {
+        "name": "A Dark Room",
+        "description": "It is pitch black. You are likely to be eaten by a grue.",
+        "image": "darkness.png",
+        "exits": {
+            "north": {
+                "href": "old-man.json"
+            },
+            "south": {
+                "href": "wumpus.json"
+            }
+        }
+    }
+
+    You can create your own and travel to your world by
+    using the "teleport" command when you play
+    <http://tale.gg/>, or run your own instance of
+    the Tale server.
+
+
+Installation and Setup
+======================
+
+The following instructions apply to an Ubuntu Server
+deployment. I develop on Mac OS 10.6 and deploy on
+Ubuntu. Your milage will vary on other systems.
+
 
 Install system dependencies
 
@@ -21,4 +65,5 @@ Install NPM
 Install Tale NPM Dependencies
 
     npm install socket.io q-util q-http q-fs jaque q uuid n-util chiron
+
 
