@@ -5,6 +5,9 @@
     "exits": {
         "trapdoor": {
             "href": "../borea/north-pole.json"
+        },
+        "exit": {
+            "href": "444.json"
         }
     }
 }

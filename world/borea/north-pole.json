@@ -6,7 +6,7 @@
         "trapdoor": {
             "href": "../austra/south-pole.json"
         },
-        "up": {
+        "exit": {
             "href": "444.json"
         }
     }

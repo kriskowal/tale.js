@@ -1,37 +1,62 @@
 
 var Q = require("q-util");
 var UTIL = require("n-util");
-var HTML = require(""); // XXX
+var HTML = require("./html");
+var RE = require("./re");
 var readCommand = require("./parse").readCommand;
+
+exports.Command = function (command, context) {
+    context = context || {};
+    context.path = "";
+    context.command = command;
+    return context;
+};
 
 exports.Branch = function (commands, nextHandler) {
     nextHandler = nextHandler || exports.noSuchCommand;
-    return function (context, command) {
-        var parsed = readCommand(command);
+    return function (context) {
+        var parsed = readCommand(context.command);
         if (UTIL.has(commands, parsed.command)) {
-            return commands[parsed.command](context, parsed.arg);
+            context.path = (context.path || '') + parsed.command + " ";
+            context.command = parsed.arg;
+            return commands[parsed.command](context);
         } else {
-            return nextHandler(context, command);
+            return nextHandler(context);
         }
     };
 };
 
-exports.noSuchCommand = function () {
-    return Q.reject("No such command");
+exports.PrefixBranch = function (prefix, handler, nextHandler) {
+    prefix = new RegExp('^(' + RE.escape(prefix) + ')(.*)');
+    return function (context) {
+        var match = prefix.exec(context.command);
+        if (match) {
+            context.path = context.path + match[1];
+            context.prefix = match[1];
+            context.command = match[2];
+            return handler(context);
+        } else {
+            return nextHandler(context);
+        }
+    };
+};
+
+exports.noSuchCommand = function (context) {
+    return console.log("No such command: " + HTML.escape(context.path + context.command));
 };
 
 function main() {
     var handle = exports.Branch({
-        "go": function (context, command) {
-            console.log('go', command);
+        "go": function (context) {
+            console.log('go', context.command);
         },
-        "teleport": function (context, command) {
-            context.send("You go to " + HTML.escape(command));
-            context.go(command);
+        "teleport": function (context) {
+            context.send("You go to " + HTML.escape(context.command));
+            context.go(context.command);
         }
     })
-    handle({}, "go south");
-    handle({}, "jump");
+    handle(exports.Command("go south"));
+    handle(exports.Command("jump"));
 }
 
 if (require.main === module)

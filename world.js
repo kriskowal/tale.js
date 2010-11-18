@@ -1,11 +1,15 @@
 
 var Q = require("q-util");
 var HTTP = require("q-http");
+var FS = require("q-fs");
 var UTIL = require("n-util");
 //var Cache = require("chiron/cache").Cache;
 var CHIRON = require("chiron");
 var URL = require("url");
 var HTML = require("./html");
+var COMMANDS = require("./commands");
+
+var helpFragHtml = FS.read("help.frag.html");
 
 var world = exports.world = {};
 
@@ -53,6 +57,7 @@ world.connect = function (channel, startUrl) {
     }
 
     function go(_location) {
+        _location = URL.resolve(location, _location);
         return Q.when(HTTP.read(_location), function (content) {
             try {
                 _room = JSON.parse(content);
@@ -71,22 +76,87 @@ world.connect = function (channel, startUrl) {
         });
     }
 
-    go(startUrl);
-    var loop = Q.loop(channel.receive, function (message) {
-        if (UTIL.has(room.allExits, message)) {
-            go(URL.resolve(location, room.allExits[message].href));
-            channel.send("<p>You go " + message + ".</p>");
-        } else if (message === "l" || message === "look") {
-            channel.send("<p>You take another look&hellip;</p>");
-            go(location);
+    function look(context) {
+        context.log("<p>You take another look&hellip;</p>");
+        go(location);
+    }
+
+    function teleport(context) {
+        go(context.command || '');
+    }
+
+    function help(context) {
+        return Q.when(helpFragHtml, function (help) {
+            context.log(help);
+        }, Q.error);
+    }
+
+    var context = {
+        "log": channel.send,
+        "go": go
+    };
+
+    var commonHandler = COMMANDS.Branch({
+        "l": look,
+        "look": look,
+        "t": teleport,
+        "tele": teleport,
+        "teleport": teleport,
+        "h": help,
+        "help": help
+    }, function (context) {
+        context.log(
+            "<p>Huh? I don't understand " +
+            JSON.stringify(HTML.escape(context.path + context.command)) +
+            ".</p>"
+        );
+    });
+
+    var commandHandler = COMMANDS.PrefixBranch("'", function (context) {
+        return chatHandler(context);
+    }, function (context) {
+        if (context.command) {
+            var exitName = context.command.toLowerCase();
+            if (UTIL.has(room.allExits, exitName)) {
+                go(room.allExits[exitName].href);
+                channel.send("<p>You go " + HTML.escape(exitName) + ".</p>");
+            } else {
+                return commonHandler(context);
+            }
         } else {
-            channel.send("<p>Huh? I don't understand " + JSON.stringify(HTML.escape(message)) + ".</p>");
+            context.log("<p><b>[command mode]</b></p>");
+            modeHandler = commandHandler;
         }
     });
 
-};
+    var chatHandler = COMMANDS.PrefixBranch("/", function (context) {
+        return commandHandler(context);
+    }, function (context) {
+        if (context.command) {
+            context.log(
+                "<p>You say, &#147;" +
+                HTML.escape(context.command.replace(/"/g, "'")) +
+                "&#148;.</p>"
+            );
+        } else {
+            context.log("<p><b>[chat mode]</b></p>");
+            modeHandler = chatHandler;
+        }
+    });
 
-world.tick = function () {
+    var modeHandler = commandHandler;
+
+    var loop = Q.loop(channel.receive, function (command) {
+        command = COMMANDS.Command(command, Object.create(context));
+        return Q.when(modeHandler(command), function () {
+            //console.log('Command handled: ' + JSON.stringify(context));
+        }, function (reason) {
+            context.log('!!! ' + reason);
+        });
+    });
+
+    go(startUrl);
+
 };
 
 world.start = function () {
@@ -107,11 +177,5 @@ world.start = function () {
         },
         "stopped": stopping.promise
     }
-};
-
-var Mob = function () {
-};
-
-Mob.prototype.tick = function () {
 };
 
