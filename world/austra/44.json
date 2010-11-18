@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "Valley of the Penguins",
+    "description": "The hollowed peak of the Centerberg is the heart of the realm of the chaotic penguin swarm. Swirling vanguards patrol the perimeter and the outer slopes are haven to no creature. In a flat space, the penguin smiths make their camp around the South Pole.",
+    "exits": {
+        "down": {
+            "href": "444.json"
+        },
+        "up": {
+            "href": "4.json"
+        }
+    }
+}

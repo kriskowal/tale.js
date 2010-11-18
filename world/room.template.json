@@ -1,0 +1,10 @@
+{
+    "type": "room",
+    "name": "",
+    "description": "",
+    "exits": {
+        "": {
+            "href": "#"
+        }
+    }
+}

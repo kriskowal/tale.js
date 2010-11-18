@@ -1,0 +1,24 @@
+
+Setup
+=====
+
+Install system dependencies
+
+    apt-get install g++ libssl-dev uuid-dev
+
+Install Node (0.2)
+
+    http://nodejs.org/dist/node-v0.2.4.tar.gz
+
+    ./configure
+    make
+    make install
+
+Install NPM
+
+    curl http://npmjs.org/install.sh | sh
+
+Install Tale NPM Dependencies
+
+    npm install socket.io q-util q-http q-fs jaque q uuid n-util chiron
+

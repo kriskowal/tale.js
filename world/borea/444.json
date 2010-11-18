@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "North Pole",
+    "description": "The North Pole is the red candy-striped fortress of Magus Borealis, the Red Mage of the North.  There is a small door on one side.",
+    "exits": {
+        "enter": {
+            "href": "north-pole.json"
+        },
+        "up": {
+            "href": "44.json"
+        }
+    }
+}

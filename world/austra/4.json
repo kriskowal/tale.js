@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "Centerberg",
+    "description": "The Centerberg is the largest of the three Ice Isles of Austra and is home of the Penguin Horde and clever Magus Australis.  The South Pole rests in a shallow bowl at the summit.",
+    "exits": {
+        "down": {
+            "href": "44.json"
+        },
+        "up": {
+            "href": "../austra.json"
+        }
+    }
+}

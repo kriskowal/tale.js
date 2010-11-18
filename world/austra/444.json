@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "South Pole",
+    "description": "The South Pole is the teal candy-striped watch-tower of Magus Australis, Cyan Mage of the South. Its fresnel gaze casts a yellow light wandering the slopes of Centerberg and naught in Austra escapes its notice. A small door gives entry to the penguin wizard's domain.",
+    "exits": {
+        "enter": {
+            "href": "south-pole.json"
+        },
+        "up": {
+            "href": "44.json"
+        }
+    }
+}

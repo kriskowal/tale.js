@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "The Castle of U",
+    "description": "High walls surround the Castle of U and tall towers in all of its quarters, but the tallest tower and parapet are at the very center.",
+    "exits": {
+        "down": {
+            "href": "4444.json"
+        },
+        "up": {
+            "href": "44.json"
+        }
+    }
+}

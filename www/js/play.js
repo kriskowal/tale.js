@@ -13,7 +13,7 @@
             log(message);
         });
         socket.on('disconnect', function () {
-            log("Tale has disconnected.");
+            log("<p>Tale has disconnected.</p>");
         });
 
         $.get("command.frag.html", function (frag) {
@@ -35,7 +35,7 @@
     var buffer = $("#buffer");
     function log(message) {
         before();
-        buffer.append("<p>" + message + "</p>");
+        buffer.append(message);
         after();
     }
 

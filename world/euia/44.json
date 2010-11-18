@@ -1,0 +1,13 @@
+{
+    "type": "room",
+    "name": "The Citadel of U",
+    "description": "U is a walled city with eight districts and the central castle, capital of Euia. The rivers of western Euia, and the streams of central Euia, flow in through the walls and form an encircling canal through the city, ultimately flowing out through the East Gate.",
+    "exits": {
+        "down": {
+            "href": "444.json"
+        },
+        "up": {
+            "href": "4.json"
+        }
+    }
+}
