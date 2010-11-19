@@ -12,6 +12,10 @@ var port = PROCESS.argv[2] || 80;
 var app = JAQUE.Branch({
     "": JAQUE.File("www/index.html"),
     "index.html": JAQUE.PermanentRedirect("/"),
+    "index.js": JAQUE.FileConcat([
+        "www/js/q.js",
+        "www/js/index.js"
+    ], 'application/javascript'),
     "play.js": JAQUE.FileConcat([
         "www/js/jquery-1.4.3.min.js",
         "www/js/socket.io.js",
