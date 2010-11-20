@@ -45,23 +45,14 @@
             <div id="music"></div>
         </div>
         <script>
-            (function () {
-                var load = function (href) {
+            (function (global) {
+                var load = global.load = function (href) {
                     var script = document.createElement("script");
                     script.src = href;
                     document.body.appendChild(script);
                 };
-                var play = document.getElementById('play');
-                play.onclick = function () {
-                    play.onclick = function () {
-                        return false;
-                    };
-                    load('/play.js');
-                    return false;
-                };
-                play.focus();
                 load('/index.js');
-            })();
+            })(this);
         </script>
     </body>
 </html>

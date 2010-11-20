@@ -205,12 +205,18 @@ world.connect = function (channel, startUrl) {
     var context = {
         "log": function (message) {
             if (typeof message === "string") {
-                channel.send(message);
+                channel.send(JSON.stringify({
+                    "to": "log",
+                    "content": message
+                }));
             } else {
                 message.pre &&
                     message.pre(context);
                 !message.quiet &&
-                    channel.send('<p>' + narrative.say(message) + '</p>');
+                    channel.send(JSON.stringify({
+                        "to": "log",
+                        "content": '<p>' + narrative.say(message) + '</p>'
+                    }));
                 message.post &&
                     message.post(context);
             }
@@ -297,7 +303,7 @@ world.connect = function (channel, startUrl) {
 
     go(startUrl);
 
-    Q.when(channel.disconnect, function () {
+    Q.when(channel.disconnected, function () {
         roomStream.close();
     });
 
