@@ -83,12 +83,6 @@
         cursor: default;
     }
 
-    .exit {
-        color: #104551;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
 /* fancy */
 
     /* menus */
@@ -97,9 +91,17 @@
             text-align: center;
         }
 
-        a.choice, .choices a {
+        a {
+            /*
             color: #0055aa;
             text-decoration: none;
+            */
+            color: #104551;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a.choice, .choices a {
             background: url(art/cursor.png) no-repeat left center;
             padding-left: 26px;
             opacity: .75;

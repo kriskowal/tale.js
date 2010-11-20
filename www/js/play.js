@@ -18,12 +18,18 @@ function initialSetup() {
         form = $("#command-form");
         form.submit(function () {
             var command = commandLine.val();
-            socket.send(command);
+            send(command);
             commandLine.val("").focus();
             return false;
         });
     });
 }
+
+var socketSend = function (message) {
+    socket.send(message);
+}
+
+var send = socketSend;
 
 var socket, retryInterval = 3;
 function setup() {
@@ -50,6 +56,7 @@ function setup() {
 
     Q.when(connected.promise, function () {
         retryInterval = 3;
+        send = socketSend;
     }, function (reason) {
         reconnectCountdown.resolve();
     });
@@ -63,12 +70,13 @@ function setup() {
                         event.stopPropagation();
                         event.preventDefault();
                         reconnect.resolve();
-                        count.cancel();
                     })
                 )
             );
         }, reconnect.resolve);
+        Q.when(reconnect.promise, count.cancel);
         retryInterval = Math.min(60, retryInterval * 2);
+        send = reconnect.resolve;
     });
 
     Q.when(reconnect.promise, function () {

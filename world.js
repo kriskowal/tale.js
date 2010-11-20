@@ -70,22 +70,43 @@ world.connect = function (channel, startUrl) {
     };
 
     function describe() {
+
         var description = '<p>' + room.description + '</p>';
         if (room.image)
             description = '<img src="' + room.image + '" align="right" height="200" width="200">' + description;
         if (room.name)
             description = "<h2>" + room.name + "</h2>" + description;
         context.log(description);
+
+        var parts = [];
         if (room.exits) {
-            context.log(
-                "<p>There are exits: " +
+            parts.push(
+                "There are exits: " +
                 UTIL.keys(room.exits).map(function (e) {
-                    return '<a class="exit" onclick="sendCommand(\'' + e + '\'); return false" href="#" target="_blank">' + e + '</a>'
+                    return '<a onclick="sendCommand(\'' + e + '\'); return false" href="#" target="_blank">' + e + '</a>'
                 }).join(", ") +
-                ".</p>"
+                "."
             );
         }
+        var connections = roomStream.connections();
+        if (connections.filter(function (id) {
+            return id !== player.id;
+        }).length) {
+            parts.push("There are people here: " + narrative.identifyPeople(connections) + ".");
+        }
+        context.log("<p>" + parts.join(" ") + "</p>");
+
+        // NARRATIVE
         narrative.flush();
+        // learn the name of this location
+        narrative.learnLocation(location, room.name);
+        // learn the names of places in various directions
+        var directions = UTIL.mapApply(room.exits, function (direction, exit) {
+            return [URL.resolve(location, exit.href), direction];
+        })
+        directions = UTIL.object(directions);
+        narrative.learnDirections(directions);
+
     }
 
     function go(_location) {
