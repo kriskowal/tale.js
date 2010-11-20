@@ -62,6 +62,20 @@
                 play.focus();
                 load('/index.js');
             })();
+
+            function sendCommand(command) {
+                var commandLine = $("#command-line")[0];
+                var oldbuffer = commandLine.value;
+                commandLine.value = command;
+                $("#command-form").submit();
+                commandLine.value = oldbuffer;
+
+                if (commandLine.scrollIntoView) {
+                    commandLine.scrollIntoView();
+                } else {
+                    window.scrollTop = window.scrollHeight - window.clientHeight;
+                }
+            }
         </script>
     </body>
 </html>

@@ -48,9 +48,12 @@ world.connect = function (channel, startUrl) {
             description = "<h2>" + room.name + "</h2>" + description;
         channel.send(description);
         if (room.exits) {
+
             channel.send(
                 "<p>There are exits: " +
-                UTIL.keys(room.exits).join(", ") +
+                UTIL.keys(room.exits).map(function (e) {
+                    return '<a class="exit" onclick="sendCommand(\'' + e + '\')">' + e + '</a>'
+                }).join(", ") +
                 ".</p>"
             );
         }

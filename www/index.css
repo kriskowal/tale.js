@@ -87,6 +87,12 @@
         cursor: default;
     }
 
+    .exit {
+        color: #104551;
+        font-weight: bold;
+        cursor: hand;
+    }
+
 /* fancy */
 
     /* menus */
