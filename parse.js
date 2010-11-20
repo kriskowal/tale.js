@@ -4,7 +4,8 @@ exports.readCommand = function (text) {
     match = /\s+/.exec(text);
     if (match === null) {
         return {
-            "command": text
+            "command": text,
+            "arg": ""
         };
     } else {
         command = text.substring(0, match.index);
@@ -12,7 +13,8 @@ exports.readCommand = function (text) {
         match = /\S/.exec(text);
         if (!match) {
             return {
-                "command": command
+                "command": command,
+                "arg": ""
             };
         } else {
             text = text.substring(match.index);

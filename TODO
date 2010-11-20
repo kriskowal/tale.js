@@ -1,0 +1,31 @@
+
+1
+
+ * music
+ * graceful reconnection
+ * more world content
+ * package.json for easy npm install
+
+2
+
+ * progress indicator during loading
+ * improve lazy loader
+
+3
+
+ * items and inventories
+ * monsters
+ * remote Q def node channels
+ * agent AI
+ * menus
+
+4
+
+ * skill tree
+ * combat
+
+DONE
+
+ * nauseating tale spin
+ * room chat
+

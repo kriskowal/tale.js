@@ -12,9 +12,14 @@ exports.Command = function (command, context) {
     return context;
 };
 
+exports.Named = function (name, handler) {
+    handler.menuName = name;
+    return handler;
+};
+
 exports.Branch = function (commands, nextHandler) {
     nextHandler = nextHandler || exports.noSuchCommand;
-    return function (context) {
+    var handler = function (context) {
         var parsed = readCommand(context.command);
         if (UTIL.has(commands, parsed.command)) {
             context.path = (context.path || '') + parsed.command + " ";
@@ -24,21 +29,39 @@ exports.Branch = function (commands, nextHandler) {
             return nextHandler(context);
         }
     };
+    handler.menu = function () {
+        var menu = UTIL.object(UTIL.mapApply(commands, function (command, handler) {
+            return [handler.menuName || key, key + " "];
+        }));
+        if (nextHandler.menu)
+            Array.prototype.push.apply(menu, nextHandler.menu());
+        return menu;
+    };
+    return handler;
 };
 
-exports.PrefixBranch = function (prefix, handler, nextHandler) {
+exports.PrefixBranch = function (prefix, thisHandler, nextHandler) {
     prefix = new RegExp('^(' + RE.escape(prefix) + ')(.*)');
-    return function (context) {
+    var handler = function (context) {
         var match = prefix.exec(context.command);
         if (match) {
             context.path = context.path + match[1];
             context.prefix = match[1];
             context.command = match[2];
-            return handler(context);
+            return thisHandler(context);
         } else {
             return nextHandler(context);
         }
     };
+    handler.menu = function () {
+        var menu = UTIL.object([
+            [prefix, prefix]
+        ]);
+        if (nextHandler.menu)
+            Array.prototype.push.apply(menu, nextHandler.menu());
+        return menu;
+    };
+    return handler;
 };
 
 exports.noSuchCommand = function (context) {

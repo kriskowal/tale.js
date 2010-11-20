@@ -8,10 +8,17 @@ var CHIRON = require("chiron");
 var URL = require("url");
 var HTML = require("./html");
 var COMMANDS = require("./commands");
+var MESSAGES = require("./messages");
+var UUID = require("uuid");
+var verbs = require("./lib/narrate/verbs");
+var Thing = require("./lib/narrate/things").Thing;
+var Narrative = require("./lib/narrate").Narrative;
 
 var helpFragHtml = FS.read("help.frag.html");
 
 var world = exports.world = {};
+
+var dispatcher = MESSAGES.Dispatcher();
 
 function Room(room) {
     var exits = room.allExits = {};
@@ -37,8 +44,30 @@ var genesis = Room({
 world.connect = function (channel, startUrl) {
     var queue = Q.Queue();
 
+    var player = Thing({
+        "id": UUID.generate(),
+        "name": undefined,
+        "gender": undefined,
+        "singular": "person",
+        "person": true,
+        "creature": true
+    });
+
+    var narrator = Thing({
+        "id": UUID.generate(),
+        "singular": "person",
+        "person": true,
+        "creature": true
+    });
+
+    var narrative = Narrative(narrator, player);
+
     var room;
     var location;
+    var roomStream = {
+        "send": function () {},
+        "close": function () {}
+    };
 
     function describe() {
         var description = '<p>' + room.description + '</p>';
@@ -46,37 +75,68 @@ world.connect = function (channel, startUrl) {
             description = '<img src="' + room.image + '" align="right" height="200" width="200">' + description;
         if (room.name)
             description = "<h2>" + room.name + "</h2>" + description;
-        channel.send(description);
+        context.log(description);
         if (room.exits) {
-
-            channel.send(
+            context.log(
                 "<p>There are exits: " +
                 UTIL.keys(room.exits).map(function (e) {
-                    return '<a class="exit" onclick="sendCommand(\'' + e + '\')">' + e + '</a>'
+                    return '<a class="exit" onclick="sendCommand(\'' + e + '\'); return false" href="#" target="_blank">' + e + '</a>'
                 }).join(", ") +
                 ".</p>"
             );
         }
+        narrative.flush();
     }
 
     function go(_location) {
         _location = URL.resolve(location, _location);
-        return Q.when(HTTP.read(_location), function (content) {
-            try {
-                _room = JSON.parse(content);
-                location = _location;
-                room = Room(_room);
-                describe();
-            } catch (exception) {
+        if (_location === location) {
+            describe();
+        } else {
+            return Q.when(HTTP.read(_location), function (content) {
+                try {
+                    _room = JSON.parse(content);
+                    room = Room(_room);
+                    roomStream.close();
+                    roomStream.send({
+                        "subject": player,
+                        "verb": verbs.leave,
+                        "modifiers": {
+                            "from": location,
+                            "to": _location
+                        }
+                    });
+                    roomStream = dispatcher.open(_location, player.id);
+                    roomStream.send({
+                        "subject": player,
+                        "verb": verbs.arrive,
+                        "modifiers": {
+                            "from": location,
+                            "to": _location
+                        }
+                    });
+                    roomStream.connect(context.log);
+                    location = _location;
+                    describe();
+                } catch (exception) {
+                    room = genesis;
+                    describe();
+                    throw exception;
+                }
+            }, function (reason) {
+                console.error(reason);
                 room = genesis;
                 describe();
-                throw exception;
-            }
-        }, function (reason) {
-            console.error(reason);
-            room = genesis;
-            describe();
-        });
+            });
+        }
+    }
+
+    function goCommand(context) {
+        if (!UTIL.has(room.allExits, context.command)) {
+            context.log("<p>There is no way to go &#147;" + HTML.escape(context.command) + "&#148; from here.</p>");
+        } else {
+            go(room.allExits[context.command].href);
+        }
     }
 
     function look(context) {
@@ -88,6 +148,54 @@ world.connect = function (channel, startUrl) {
         go(context.command || '');
     }
 
+    function who(context) {
+        context.log("<p>People here: " + narrative.identifyPeople(roomStream.connections()) + ".</p>");
+    }
+
+    function nick(context) {
+        var name = context.command || '';
+        if (name.length < 1 || name.length > 10 || HTML.escape(name) !== name) {
+            context.log("<p>You cannot go by the name, &#147;" + HTML.escape(name) + "&#148;.</p>");
+            return;
+        }
+        name = name[0].toUpperCase() + name.slice(1);
+        player.name = name;
+        context.log("<p>You call yourself, &#147;" + HTML.escape(player.name) + "&#148;. That is the name you will use when greeting people.</p>");
+    }
+
+    function gender(context) {
+        if (!UTIL.has(['male', 'female'], context.command)) {
+            context.log("<p>For the purpose of the narrative, &#147;male&#148; and &#147;female&#148; are the gender options, not &#147;" + HTML.escape(context.command) + "&#148;.</p>");
+        } else {
+            context.log("<p>Okay, people will recognize your gender now.</p>");
+            player.gender = context.command;
+        }
+    }
+
+    function greet(context) {
+        if (player.name === undefined) {
+            roomStream.send({
+                "subject": player,
+                "verb": verbs.say,
+                "quote": "Hello.",
+            });
+        } else {
+            roomStream.send({
+                "subject": player,
+                "verb": verbs.say,
+                "quote": "Hi, I&#8217;m " + player.name + ".",
+                "player": player,
+                "post": function (context) {
+                    context.narrative.meet(this.player, this.player.name, this.player.gender);
+                }
+            });
+        }
+    }
+
+    function call(context) {
+        context.command
+    }
+
     function help(context) {
         return Q.when(helpFragHtml, function (help) {
             context.log(help);
@@ -95,19 +203,48 @@ world.connect = function (channel, startUrl) {
     }
 
     var context = {
-        "log": channel.send,
-        "go": go
+        "log": function (message) {
+            if (typeof message === "string") {
+                channel.send(message);
+            } else {
+                message.pre &&
+                    message.pre(context);
+                !message.quiet &&
+                    channel.send('<p>' + narrative.say(message) + '</p>');
+                message.post &&
+                    message.post(context);
+            }
+        },
+        "go": go,
+        "player": player,
+        "narrative": narrative,
+        "effect": function (message) {
+            roomStream.send(message);
+        },
+        "commands": {
+            "g": goCommand,
+            "go": goCommand,
+            "l": look,
+            "look": look,
+            "t": teleport,
+            "tele": teleport,
+            "teleport": teleport,
+            "say": function (context) {
+                // late bound, since declared later
+                return chatHandler(context);
+            },
+            "w": who,
+            "who": who,
+            "nick": nick,
+            "name": nick,
+            "gender": gender,
+            "greet": greet,
+            "h": help,
+            "help": help
+        }
     };
 
-    var commonHandler = COMMANDS.Branch({
-        "l": look,
-        "look": look,
-        "t": teleport,
-        "tele": teleport,
-        "teleport": teleport,
-        "h": help,
-        "help": help
-    }, function (context) {
+    var commonHandler = COMMANDS.Branch(context.commands, function (context) {
         context.log(
             "<p>Huh? I don't understand " +
             JSON.stringify(HTML.escape(context.path + context.command)) +
@@ -122,7 +259,7 @@ world.connect = function (channel, startUrl) {
             var exitName = context.command.toLowerCase();
             if (UTIL.has(room.allExits, exitName)) {
                 go(room.allExits[exitName].href);
-                channel.send("<p>You go " + HTML.escape(exitName) + ".</p>");
+                context.log("<p>You go " + HTML.escape(exitName) + ".</p>");
             } else {
                 return commonHandler(context);
             }
@@ -136,11 +273,11 @@ world.connect = function (channel, startUrl) {
         return commandHandler(context);
     }, function (context) {
         if (context.command) {
-            context.log(
-                "<p>You say, &#147;" +
-                HTML.escape(context.command.replace(/"/g, "'")) +
-                "&#148;.</p>"
-            );
+            roomStream.send({
+                "subject": player,
+                "verb": verbs.say,
+                "quote": HTML.escape(context.command)
+            });
         } else {
             context.log("<p><b>[chat mode]</b></p>");
             modeHandler = chatHandler;
@@ -159,6 +296,10 @@ world.connect = function (channel, startUrl) {
     });
 
     go(startUrl);
+
+    Q.when(channel.disconnect, function () {
+        roomStream.close();
+    });
 
 };
 

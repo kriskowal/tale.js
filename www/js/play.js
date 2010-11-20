@@ -32,6 +32,16 @@
         });
     }
 
+    window.sendCommand = function (command) {
+        var commandLine = $("#command-line")[0];
+        var oldbuffer = commandLine.value;
+        commandLine.value = command;
+        $("#command-form").submit();
+        commandLine.value = oldbuffer;
+        before();
+        after();
+    }
+
     var buffer = $("#buffer");
     function log(message) {
         before();

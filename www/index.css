@@ -74,10 +74,6 @@
         background-color: #333355;
     }
 
-    i {
-        color: white;
-    }
-
     td, th {
         border: solid #0055aa 1px;
         padding: 2px 4px;
@@ -90,7 +86,7 @@
     .exit {
         color: #104551;
         font-weight: bold;
-        cursor: hand;
+        text-decoration: none;
     }
 
 /* fancy */
