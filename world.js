@@ -110,10 +110,10 @@ world.connect = function (channel, startUrl) {
 
     }
 
-    function go(_location) {
+    function go(_location, boldly) {
         _location = URL.resolve(location, _location);
         if (_location === location) {
-            describe();
+            !boldly && describe();
         } else {
             return Q.when(HTTP.read(_location), function (content) {
                 try {
@@ -139,16 +139,16 @@ world.connect = function (channel, startUrl) {
                     });
                     roomStream.connect(context.log);
                     location = _location;
-                    describe();
+                    !boldly && describe();
                 } catch (exception) {
                     room = genesis;
-                    describe();
+                    !boldly && describe();
                     throw exception;
                 }
             }, function (reason) {
                 console.error(reason);
                 room = genesis;
-                describe();
+                !boldly && describe();
             });
         }
     }
@@ -180,7 +180,15 @@ world.connect = function (channel, startUrl) {
             var arg = commandParsed.arg;
             var conjugates = command.split("/");
             if (conjugates.length === 1) {
-                verb = verbs = conjugates.shift();
+                command = conjugates.shift();
+                var match = /^(.*)e?s$/.exec(command);
+                if (match) {
+                    verbs = command;
+                    verb = match[1];
+                } else {
+                    verb = command;
+                    verbs = verb + "s";
+                }
             } else {
                 verb = conjugates[0];
                 verbs = conjugates.slice(1).join("/");
@@ -189,7 +197,6 @@ world.connect = function (channel, startUrl) {
                 verb = verb + " " + arg;
                 verbs = verbs + " " + arg;
             }
-
         } else {
             verb = conjugates[0];
             verbs = conjugates.slice(1).join(" / ");
@@ -299,6 +306,7 @@ world.connect = function (channel, startUrl) {
                 // late bound, since declared later
                 return chatHandler(context);
             },
+            "i": emote,
             "me": emote,
             "w": who,
             "who": who,
@@ -365,6 +373,13 @@ world.connect = function (channel, startUrl) {
     go(startUrl);
 
     Q.when(channel.disconnected, function () {
+        roomStream.send({
+            "subject": player,
+            "verb": verbs.leave,
+            "modifiers": {
+                "from": location
+            }
+        });
         roomStream.close();
     });
 
