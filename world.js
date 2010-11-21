@@ -13,6 +13,7 @@ var UUID = require("uuid");
 var verbs = require("./lib/narrate/verbs");
 var Thing = require("./lib/narrate/things").Thing;
 var Narrative = require("./lib/narrate").Narrative;
+var readCommand = require("./parse").readCommand;
 
 var helpFragHtml = FS.read("help.frag.html");
 
@@ -154,7 +155,11 @@ world.connect = function (channel, startUrl) {
 
     function goCommand(context) {
         if (!UTIL.has(room.allExits, context.command)) {
-            context.log("<p>There is no way to go &#147;" + HTML.escape(context.command) + "&#148; from here.</p>");
+            context.log(
+                "<p>There is no way to go &#147;" +
+                HTML.escape(context.command) +
+                "&#148; from here.</p>"
+            );
         } else {
             go(room.allExits[context.command].href);
         }
@@ -163,6 +168,40 @@ world.connect = function (channel, startUrl) {
     function look(context) {
         context.log("<p>You take another look&hellip;</p>");
         go(location);
+    }
+
+    function emote(context) {
+        var verb, verbs;
+        var command = context.command;
+        var conjugates = command.split(" / ");
+        if (conjugates.length === 1) {
+            var commandParsed = readCommand(command);
+            command = commandParsed.command;
+            var arg = commandParsed.arg;
+            var conjugates = command.split("/");
+            if (conjugates.length === 1) {
+                verb = verbs = conjugates.shift();
+            } else {
+                verb = conjugates[0];
+                verbs = conjugates.slice(1).join("/");
+            }
+            if (arg) {
+                verb = verb + " " + arg;
+                verbs = verbs + " " + arg;
+            }
+
+        } else {
+            verb = conjugates[0];
+            verbs = conjugates.slice(1).join(" / ");
+        }
+        roomStream.send({
+            "subject": player,
+            "verb": {
+                "verb": "&#147;" + verb + "&#148;",
+                "verbs": "&#147;" + verbs + "&#148;"
+            },
+            "quote": context.command,
+        });
     }
 
     function teleport(context) {
@@ -260,6 +299,7 @@ world.connect = function (channel, startUrl) {
                 // late bound, since declared later
                 return chatHandler(context);
             },
+            "me": emote,
             "w": who,
             "who": who,
             "nick": nick,
