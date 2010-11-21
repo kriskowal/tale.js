@@ -61,8 +61,13 @@ function setup() {
     socket.on('connect', connected.resolve);
     socket.on('message', function (message) {
         message = JSON.parse(message);
-        if (message.to === 'log') {
-            log(message.content);
+        var recipient = ({
+            "log": log,
+            "css": css,
+            "colors": colors
+        })[message.to];
+        if (recipient) {
+            recipient(message.content);
         } else {
             console.log(message);
         }
@@ -128,6 +133,25 @@ function countdown(seconds, every, last) {
         }
     };
 };
+
+var cssElement;
+function css(css) {
+    if (!cssElement)
+        cssElement = $("<style></style>").appendTo(document.body);
+    cssElement.text(css);
+}
+
+function colors(colors) {
+    css(
+        "body { " +
+            "background-color: " + colors.back + "; " +
+            "color: " + colors.fore + "; " +
+        "} " +
+        "a { " +
+            "color: " + colors.trim + "; " +
+        "} "
+   )
+}
 
 // command line buffer
 var buffer = $("#buffer");

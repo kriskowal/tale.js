@@ -146,19 +146,6 @@
         text-align: center;
     }
 
-    .description {
-        padding: 1em 3em;
-        text-align: center;
-        color: #333355;
-    }
-
-    #message {
-        border: solid 1px #aa0055;
-        border-raduis: 10px;
-        padding: 10px;
-        margin: 10px;
-    }
-
     /* commands */
 
         #command-bar {
