@@ -306,6 +306,10 @@ world.connect = function (channel, startUrl) {
                 // late bound, since declared later
                 return chatHandler(context);
             },
+            "chat": function (context) {
+                // late bound, since declared later
+                return chatHandler(context);
+            },
             "i": emote,
             "me": emote,
             "w": who,
@@ -361,13 +365,32 @@ world.connect = function (channel, startUrl) {
 
     var modeHandler = commandHandler;
 
-    var loop = Q.loop(channel.receive, function (command) {
-        command = COMMANDS.Command(command, Object.create(context));
-        return Q.when(modeHandler(command), function () {
-            //console.log('Command handled: ' + JSON.stringify(context));
-        }, function (reason) {
-            context.log('!!! ' + reason);
-        });
+    var loop = Q.loop(channel.receive, function (message) {
+        try {
+            message = JSON.parse(message);
+        } catch (exception) {
+            console.log('Malformed message: ' + message);
+            return;
+        }
+        if (message.to === 'command') {
+            var command = message.content;
+            command = COMMANDS.Command(command, Object.create(context));
+            var handler = {
+                "command": commandHandler,
+                "chat": chatHandler
+            }[message.mode] || modeHandler;
+            return Q.when(handler(command), function () {
+                //console.log('Command handled: ' + JSON.stringify(context));
+            }, function (reason) {
+                context.log("<p>Tale encountered a technical difficulty processing your command.</p>");
+                console.log('!!! ' + reason);
+            });
+        } else if (message.to === 'control') {
+            //context.log('<p>^' + "abcdefghijklmnopqrstuvwxyz"[message.content - 1] + "</p>");
+        } else {
+            console.log('unable to deliver message:');
+            console.log(message);
+        }
     });
 
     go(startUrl);

@@ -15,6 +15,15 @@ function initialSetup() {
         prompt = $("#prompt");
         commandLine = $("#command-line");
         commandLine.focus();
+        commandLine.keypress(function (event) {
+            if (event.metaKey) {
+                socket.send(JSON.stringify({
+                    "to": "control",
+                    "content": event.which
+                }));
+                return false;
+            }
+        });
         form = $("#command-form");
         form.submit(function () {
             var command = commandLine.val();
@@ -25,9 +34,18 @@ function initialSetup() {
     });
 }
 
-var socketSend = function (message) {
-    socket.send(message);
-}
+var socketSend = function (command, mode) {
+    socket.send(JSON.stringify({
+        "to": "command",
+        "content": command,
+        "mode": mode
+    }));
+};
+
+// a hook for links that send commands
+window.sendCommand = function (command) {
+    socketSend(command, "command");
+};
 
 var send = socketSend;
 
@@ -110,17 +128,6 @@ function countdown(seconds, every, last) {
         }
     };
 };
-
-// a hook for links that send commands
-window.sendCommand = function (command) {
-    var commandLine = $("#command-line")[0];
-    var oldbuffer = commandLine.value;
-    commandLine.value = command;
-    $("#command-form").submit();
-    commandLine.value = oldbuffer;
-    before();
-    after();
-}
 
 // command line buffer
 var buffer = $("#buffer");
