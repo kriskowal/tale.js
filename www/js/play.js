@@ -147,8 +147,8 @@ function setStatus(message) {
     }
 }
 function resetStatus(message) {
-    statusMessage = undefined;
     setStatus(message);
+    statusMessage = undefined;
 }
 
 // buffer position control
