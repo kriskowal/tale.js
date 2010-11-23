@@ -96,7 +96,6 @@
         var sun = "rgb(255, " + Math.floor(255 * y) + ", 0)";
         var back = over(over(colors.day.back, sun, x * season), colors.night.back, x);
         var fore = x > .5 ? colors.night.fore : colors.day.fore;
-        console.log(x, fore, back);
         return {
             "back": back,
             "fore": fore

@@ -62,7 +62,6 @@ function setup() {
     setTimeout(connected.reject, 3000);
     socket.on('connect', connected.resolve);
     socket.on('message', function (message) {
-        console.log(message);
         message = JSON.parse(message);
         var recipient = ({
             "log": log,
@@ -73,7 +72,7 @@ function setup() {
         if (recipient) {
             recipient(message.content);
         } else {
-            console.log(message);
+            //console.log(message);
         }
     });
     socket.on('disconnect', function () {
