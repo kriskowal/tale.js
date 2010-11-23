@@ -1,14 +1,14 @@
 (function (global) {
 
 var Q = global["/q"];
+var COLORS = global["/tale/color-scheme"];
 
 this.WEB_SOCKET_SWF_LOCATION = "/js/websocket.swf";
 
 var form, prompt, commandLine;
 
 function initialSetup() {
-    setup();
-
+    var ready = Q.defer();
     $.get("command.frag.html", function (frag) {
         $(frag).insertAfter($("#buffer"));
         $(document).scrollTop($(document).scrollTop() + 1000);
@@ -31,7 +31,9 @@ function initialSetup() {
             commandLine.val("").focus();
             return false;
         });
+        ready.resolve();
     });
+    return Q.when(ready.promise, setup);
 }
 
 var socketSend = function (command, mode) {
@@ -60,11 +62,13 @@ function setup() {
     setTimeout(connected.reject, 3000);
     socket.on('connect', connected.resolve);
     socket.on('message', function (message) {
+        console.log(message);
         message = JSON.parse(message);
         var recipient = ({
             "log": log,
             "css": css,
-            "colors": colors
+            "colors": colors,
+            "time": time
         })[message.to];
         if (recipient) {
             recipient(message.content);
@@ -99,12 +103,17 @@ function setup() {
         }, reconnect.resolve);
         Q.when(reconnect.promise, count.cancel);
         retryInterval = Math.min(60, retryInterval * 2);
-        send = reconnect.resolve;
+        send = function (command) {
+            reconnect.resolve();
+            command && Q.when(reconnected, function () {
+                send(command);
+            });
+        };
     });
 
-    Q.when(reconnect.promise, function () {
+    var reconnected = Q.when(reconnect.promise, function () {
         setStatus("<p>Trying again&hellip;</p>");
-        Q.when(setup(), function () {
+        return Q.when(setup(), function () {
             resetStatus('<p>Tale has reconnected.</p>');
         });
     });
@@ -148,9 +157,65 @@ function colors(colors) {
             "color: " + colors.fore + "; " +
         "} " +
         "a { " +
-            "color: " + colors.trim + "; " +
+            "color: " + colors.fore + "; " +
         "} "
    )
+}
+
+function transition(at, steps, interval, callback, done) {
+    if (at < 1) {
+        setTimeout(function () {
+            transition(at + 1 / steps, steps, interval, callback, done);
+        }, interval);
+    } else {
+        done();
+    }
+    // call after setting an interval to
+    // ensure that it is scheduled before computational
+    // delay
+    callback(at);
+}
+
+var currentColors = {
+    "back": "#46b3d3",
+    "fore": "#000000"
+};
+var animationComplete;
+function animateColors(newColors) {
+    animationComplete =
+    Q.when(animationComplete, function () {
+        var complete = Q.defer();
+        transition(0, 20, 200, function (progress) {
+            colors({
+                "back": COLORS.over(currentColors.back, newColors.back, progress),
+                "fore": COLORS.over(currentColors.fore, newColors.fore, progress)
+            });
+        }, function () {
+            currentColors = newColors;
+            complete.resolve();
+        });
+        return complete.promise;
+    });
+}
+
+var secondsPerDay = 60 * 60;
+var secondsPerYear = secondsPerDay * 4;
+var updateColorsHandle;
+var timeOffset = 0;
+function updateColors() {
+    if (updateColorsHandle)
+        clearTimeout(updateColorsHandle);
+    var n = timeOffset + new Date().getTime();
+    animateColors(COLORS.colors(
+        n / 1000 % secondsPerDay / secondsPerDay,
+        n / 1000 % secondsPerYear / secondsPerYear
+    ));
+    updateColorsHandle = setTimeout(updateColors, 20000);
+}
+
+function time(serverDate) {
+    timeOffset = serverDate - new Date().getTime();
+    updateColors();
 }
 
 // command line buffer
@@ -196,6 +261,8 @@ function before() {
 }
 function after() {
     if (wasBottom) {
+        if (!commandLine)
+            return;
         var el = commandLine.get(0);
         if (el.scrollIntoView) {
             el.scrollIntoView();

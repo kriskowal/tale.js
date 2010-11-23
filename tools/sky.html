@@ -1,0 +1,26 @@
+<html>
+    <body>
+        <canvas id="sky" height="100" width="100"></canvas>
+        <script src="../www/js/color-scheme.js"></script>
+        <script>
+            (function (global) {
+                var skyColor = global["/tale/color-scheme"].skyColor;
+
+                var sky = document.getElementById("sky");
+                if (!sky.getContext)
+                    return;
+
+                var skyContext = sky.getContext("2d");
+                for (var i = 0; i < sky.width; i++) {
+                    for (var j = 0; j < sky.height; j++) {
+                        skyContext.fillStyle = skyColor(i / sky.width, j / sky.height, 1);
+                        skyContext.fillRect(i, j, 1, 1);
+                    }
+                }
+
+                //location = sky.toDataURL("image/png");
+
+            })(this);
+        </script>
+    </body>
+</html>
