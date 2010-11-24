@@ -58,10 +58,13 @@ function setup() {
     var connected = Q.defer();
     var reconnectCountdown = Q.defer();
     var reconnect = Q.defer();
+    var disconnected = false;
 
     setTimeout(connected.reject, 3000);
     socket.on('connect', connected.resolve);
     socket.on('message', function (message) {
+        if (disconnected)
+            return;
         message = JSON.parse(message);
         var recipient = ({
             "log": log,
@@ -76,6 +79,7 @@ function setup() {
         }
     });
     socket.on('disconnect', function () {
+        disconnected = true;
         setStatus("<p>Tale has disconnected.</p>");
         reconnectCountdown.resolve();
     });

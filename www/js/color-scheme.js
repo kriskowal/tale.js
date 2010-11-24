@@ -21,7 +21,7 @@
         return "rgba(" + [data[0], data[1], data[2], data[3] / 255].join(', ') + ")";
     }
 
-    var edge = .2;
+    var edge = .1;
     function phase(progress, phases) {
         if (
             progress < .25 - edge ||
