@@ -1,16 +1,29 @@
-(function (global) {
+(function (global, require) {
 
-var Q = global["/q"];
-var COLORS = global["/tale/color-scheme"];
+var Q = require("q");
+var COLORS = require("tale/color-scheme");
 
 global.WEB_SOCKET_SWF_LOCATION = "/js/websocket.swf";
 global.SM2_DEFER = true; // soundmanager2
+
+$(window).click(function (event) {
+    var target = $(event.target);
+    if (target.is('a')) {
+        var command = target.attr('command');
+        if (command) {
+            event.stopPropagation();
+            event.preventDefault();
+            socketSend(command, 'command');
+        }
+    }
+});
 
 var responders = {
     "log": log,
     "css": css,
     "colors": colors,
-    "time": time
+    "time": time,
+    "mode": mode
 };
 
 // arrange for music messages to be forwarded
@@ -25,6 +38,7 @@ var form, prompt, commandLine;
 function initialSetup() {
     var ready = Q.defer();
     $.get("command.frag.html", function (frag) {
+        $(".menu").remove();
         $(frag).insertAfter($("#buffer"));
         $(document).scrollTop($(document).scrollTop() + 1000);
         prompt = $("#prompt");
@@ -57,11 +71,6 @@ var socketSend = function (command, mode) {
         "content": command,
         "mode": mode
     }));
-};
-
-// a hook for links that send commands
-window.sendCommand = function (command) {
-    socketSend(command, "command");
 };
 
 var send = socketSend;
@@ -226,6 +235,12 @@ function time(serverDate) {
     updateColors();
 }
 
+function mode(mode) {
+    before();
+    $("body").removeClass("chat-mode command-mode").addClass(mode + '-mode');
+    after();
+}
+
 // command line buffer
 var buffer = $("#buffer");
 function log(message) {
@@ -281,8 +296,9 @@ function after() {
 }
 
 Q.when(global.startTale, function () {
-    $(".menu").remove();
     initialSetup();
 });
 
-})(this);
+})(this, typeof exports !== 'undefined' ? require : function (name) {
+    return window["/" + name];
+});

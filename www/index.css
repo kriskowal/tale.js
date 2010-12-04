@@ -33,7 +33,7 @@
             visibility: visible;
             display: block;
         }
-        
+
         #deadcentre {
             position: absolute;
             top: -260px;
@@ -170,58 +170,50 @@
 
     /* sides */
 
-        #hud {
-            position: fixed;
-            height: 50%;
+        #x-horizon {
+            position: relative;
         }
 
-        #hudHorizon {
+        #x-left-anchor {
             position: absolute;
-            top: 50%;
+            top: 0px;
             left: 0px;
-            width: 600px;
-            margin: auto auto;
-            height: 1px;
-            overflow: visible;
-            visibility: visible;
-            display: block;
+        }
+
+        #x-right-anchor {
+            position: absolute;
+            left: 100%;
+            top: 0px;
+        }
+
+        #x-left {
+            position: absolute;
+            left: -1em;
+            top: 0px;
+        }
+
+        #x-right {
+            position: absolute;
+            left: 1em;
         }
 
         #music {
             position: absolute;
-            left: 0;
             top: -100px;
-            width: 100px;
-            height: 200px;
+            width: 50px;
+            height: 50px;
         }
 
-        .javascript #music {
+        #music.playing {
+            background: url(/art/pause-50.png);
             cursor: pointer;
         }
 
-        #music.ready {
-            background-image: url(/art/play.png);
+        #music.paused {
+            background: url(/art/play-50.png);
+            cursor: pointer;
         }
 
-        #music.play {
-            background-image: url(/art/pause.png);
-        }
-
-        #map {
-            position: absolute;
-            height: 300px;
-            width: 300px;
-            top: -150px;
-        }
-
-        #widgetBar {
-            position: absolute;
-            height: 400px;
-            width: 80px;
-            top: -200px;
-            left: -100px;
-        }
-        
     /* moinmoin */
 
         .diff {

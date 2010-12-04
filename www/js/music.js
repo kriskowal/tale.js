@@ -1,5 +1,7 @@
 (function (global) {
 
+var Q = global["/q"];
+
 global.soundManager = new SoundManager();
 
 soundManager.url = '/js/soundmanager2/';
@@ -13,32 +15,89 @@ soundManager.onready(function () {
     } else {
 
         var tunes = {};
-        var running;
-        var runningId;
+        var song;
+        var songId;
+        var initialized = Q.defer();
+        var playing = false;
+        var started = false;
+        var focused = true;
+        var muted = false;
 
-        global.setMusicResponder(function (message) {
-            if (runningId === message)
-                return;
-            if (running) {
-                running.stop();
-            }
-            if (tunes[message]) {
-                running = tunes[message];
-            } else {
-                running = tunes[message] = soundManager.createSound({
-                    id: message,
-                    url: message,
-                    autoLoad: true,
-                    autoPlay: false,
-                    onload: function() {
-                    },
-                    volume: 50
-                });
-            }
-            runningId = message;
-            running.play();
+        $(window).bind('blur', function () {
+            focused = false;
+            update();
+        });
+        $(window).bind('focus', function () {
+            focused = true;
+            update();
         });
 
+        function update() {
+            if (song) {
+                if (focused && !muted) {
+                    if (!playing) {
+                        if (!started) {
+                            song.play();
+                            started = true;
+                        } else {
+                            song.resume();
+                        }
+                        playing = true;
+                    } else {
+                        song.pause();
+                    }
+                } else {
+                    if (playing) {
+                        song.pause();
+                        playing = false;
+                    }
+                }
+            }
+        }
+
+        Q.when(initialized.promise, function () {
+            $("#music").attr({
+                "class": "playing"
+            }).click(function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                if (!muted) {
+                    $(this).attr({"class": "paused"});
+                } else {
+                    $(this).attr({"class": "playing"});
+                }
+                muted = !muted;
+                update();
+            });
+        });
+
+        global.setMusicResponder(function (message) {
+            if (songId === message)
+                return;
+            if (song)
+                song.stop();
+            if (tunes[message]) {
+                song = tunes[message];
+            } else {
+                song = tunes[message] = soundManager.createSound({
+                    "id": message,
+                    "url": message,
+                    "loops": Infinity,
+                    "stream": true,
+                    "autoLoad": true,
+                    "autoPlay": false,
+                    "onfinish": function () {
+                        song && song.play();
+                    },
+                    "volume": 50
+                });
+            }
+            songId = message;
+            started = false;
+            update();
+            // display the music UI after the first song starts
+            initialized.resolve();
+        });
 
     }
 });

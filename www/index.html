@@ -3,8 +3,8 @@
         <style>@import url(index.css);</style>
         <title>Tale &#8275; a game</title>
     </head>
-    <body>
-        <div id="body">
+    <body class="chat-mode">
+        <div id="body" class="debug">
             <div class="horizon">
                 <div id="deadcentre">
                     <div class="content">
@@ -27,23 +27,21 @@
                             <a class="choice" href="http://en.wikipedia.org/wiki/Special:Random">Flee</a>
                         </p>
 
+                        <div id="x-horizon">
+                            <div id="x-left-anchor">
+                                <div id="x-left">
+                                </div>
+                            </div>
+                            <div id="x-right-anchor">
+                                <div id="x-right">
+                                    <div id="music" class="play"></div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
-            <div id="hudHorizon">
-                <div id="hud">
-                    <div id="left">
-                        <div id="ad"></div>
-                        <div id="widgetBar"></div>
-                    </div>
-                    <div id="right">
-                        <div id="map"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="horizon">
-            <div id="music"></div>
         </div>
         <script>
             (function (global) {
