@@ -1,19 +1,18 @@
 
 1
 
- * music
- * graceful reconnection
+ * items and inventories
+ * fix music replay bug
+ * parameterize time color scheme on day time, face, and season
  * more world content
  * package.json for easy npm install
 
 2
 
  * progress indicator during loading
- * improve lazy loader
 
 3
 
- * items and inventories
  * monsters
  * remote Q def node channels
  * agent AI
@@ -26,6 +25,9 @@
 
 DONE
 
+ * improve lazy loader
+ * music
+ * graceful reconnection
  * nauseating tale spin
  * room chat
 
