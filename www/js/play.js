@@ -3,7 +3,22 @@
 var Q = global["/q"];
 var COLORS = global["/tale/color-scheme"];
 
-this.WEB_SOCKET_SWF_LOCATION = "/js/websocket.swf";
+global.WEB_SOCKET_SWF_LOCATION = "/js/websocket.swf";
+global.SM2_DEFER = true; // soundmanager2
+
+var responders = {
+    "log": log,
+    "css": css,
+    "colors": colors,
+    "time": time
+};
+
+// arrange for music messages to be forwarded
+// when the music system is ready
+var music = Q.defer();
+responders.music = music.promise;
+global.setMusicResponder = music.resolve;
+global.load("/music.js");
 
 var form, prompt, commandLine;
 
@@ -66,17 +81,7 @@ function setup() {
         if (disconnected)
             return;
         message = JSON.parse(message);
-        var recipient = ({
-            "log": log,
-            "css": css,
-            "colors": colors,
-            "time": time
-        })[message.to];
-        if (recipient) {
-            recipient(message.content);
-        } else {
-            //console.log(message);
-        }
+        Q.post(responders[message.to], 'call', [null, message.content]);
     });
     socket.on('disconnect', function () {
         disconnected = true;

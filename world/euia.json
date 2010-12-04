@@ -3,6 +3,7 @@
     "name": "Euia",
     "description": "From the lofty airs of Euia, you observe its primary feature: the Euials. The Euials are mountains to the north and south, marching from east to west, forming between them the Green Vale, with its capital city of U at its heart.",
     "image": "/art/euia.png",
+    "music": "/music/6-1-euia-adventure.mp3",
     "exits": {
         "down": {
             "href": "euia/4.json"

@@ -3,6 +3,7 @@
     "name": "Austra",
     "description": "You spy from here the Three perilous Ice Bergs of Austra, in their semi-fix&egrave;d formation from the north-west to the south-east.  On the pinacle of Centerberg is the Teal candy-striped Sinister Lighthouse, capital of crafty Magus Australis. The salty waters of Austra form a frozen desert ring, save where they mix with the warm waters of Occia to the north, and the warm airs of Oria to the west.",
     "image": "/art/austra.png",
+    "music": "/music/3-1-austra-adventure.mp3",
     "exits": {
         "down": {
             "href": "austra/4.json"
