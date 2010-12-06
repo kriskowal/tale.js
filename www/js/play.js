@@ -40,10 +40,10 @@ function initialSetup() {
     $.get("command.frag.html", function (frag) {
         $(".menu").remove();
         $(frag).insertAfter($("#buffer"));
-        $(document).scrollTop($(document).scrollTop() + 1000);
         prompt = $("#prompt");
         commandLine = $("#command-line");
         commandLine.focus();
+        after();
         commandLine.keypress(function (event) {
             if (event.metaKey) {
                 socket.send(JSON.stringify({
@@ -286,7 +286,7 @@ function after() {
     if (wasBottom) {
         if (!commandLine)
             return;
-        var el = commandLine.get(0);
+        var el = $("#x-horizon").get(0);
         if (el.scrollIntoView) {
             el.scrollIntoView();
         } else {
@@ -294,6 +294,8 @@ function after() {
         }
     }
 }
+
+after();
 
 Q.when(global.startTale, function () {
     initialSetup();

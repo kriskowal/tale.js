@@ -10,7 +10,6 @@
         body {
             position: relative;
             text-align: center;
-            margin: 0;
         }
         
         #body {
@@ -89,6 +88,7 @@
 
         .menu {
             text-align: center;
+            margin-bottom: 0;
         }
 
         a {
@@ -135,6 +135,10 @@
 
     /* commands */
 
+        #command-form {
+            margin: 0;
+        }
+
         #command-bar {
             border: none;
             border-spacing: 0;
@@ -150,27 +154,34 @@
             padding: 0 1ex;
         }
 
-        #command-bar td.B input {
+        #command-bar td.B input#command-line {
             width: 100%;
             font-size: 1em;
             font-family: Consolas, monospace;
             padding: 2px 10px;
-            margin-bottom: 10px;
             border: solid #6666aa 3px;
             -webkit-border-radius: 8px;
             -moz-border-radius: 8px;
+            margin-top: 1ex;
         }
 
         #prompt {
         }
 
-        #command-line {
-            width: 100%;
-        }
-
     /* sides */
 
         #x-horizon {
+            position: relative;
+            padding-bottom: 1ex;
+        }
+
+        #x-anchor-1 {
+            position: absolute;
+            top: -1em;
+            width: 100%;
+        }
+
+        #x-anchor-2 {
             position: relative;
         }
 
@@ -182,8 +193,8 @@
 
         #x-right-anchor {
             position: absolute;
-            left: 100%;
             top: 0px;
+            left: 100%;
         }
 
         #x-left {
@@ -199,18 +210,18 @@
 
         #music {
             position: absolute;
-            top: -100px;
+            top: -25px;
             width: 50px;
             height: 50px;
         }
 
-        #music.playing {
-            background: url(/art/pause-50.png);
+        #music.initialized {
+            background: url(/art/sound/mute-50.png);
             cursor: pointer;
         }
 
-        #music.paused {
-            background: url(/art/play-50.png);
+        #music.enabled {
+            background: url(/art/sound/loud-50.png);
             cursor: pointer;
         }
 

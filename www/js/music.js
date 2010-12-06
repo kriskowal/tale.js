@@ -2,7 +2,7 @@
 
 var Q = global["/q"];
 
-global.soundManager = new SoundManager();
+var soundManager = global.soundManager = new SoundManager();
 
 soundManager.url = '/js/soundmanager2/';
 //soundManager.flashVersion = 9; // optional: shiny features (default = 8)
@@ -10,96 +10,95 @@ soundManager.useFlashBlock = false; // optionally, enable when you're ready to d
 // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
 soundManager.useHTML5Audio = true;
 
+var focused = true; // does the window have focus?
+var enabled = false; // has the user enabled music to play
+var playing = false; // is music playing right now?
+
+var update = function () {};
+
+$(window).bind('blur', function () {
+    focused = false;
+    update();
+});
+$(window).bind('focus', function () {
+    focused = true;
+    update();
+});
+
 soundManager.onready(function () {
-    if (!soundManager.supported()) {
-    } else {
+    if (!soundManager.supported())
+        return;
 
-        var tunes = {};
-        var song;
-        var songId;
-        var initialized = Q.defer();
-        var playing = false;
-        var started = false;
-        var focused = true;
-        var muted = false;
-
-        $(window).bind('blur', function () {
-            focused = false;
-            update();
+    // display and enable music UI
+    $("#music").attr({
+        "class": "initialized"
+    }).click(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        enabled = !enabled;
+        $(this).attr({
+            "class": "initialized" +
+            (enabled ? " enabled" : "")
         });
-        $(window).bind('focus', function () {
-            focused = true;
-            update();
-        });
+        update();
+    });
 
-        function update() {
-            if (song) {
-                if (focused && !muted) {
-                    if (!playing) {
-                        if (!started) {
-                            song.play();
-                            started = true;
-                        } else {
-                            song.resume();
-                        }
-                        playing = true;
-                    } else {
-                        song.pause();
-                    }
+    var nextSong = "/music/6-1-euia-adventure.mp3";
+    global.setMusicResponder(function (message) {
+        nextSong = message;
+        update();
+    });
+
+    var songs = {};
+    function load(songUrl) {
+        if (songs[songUrl])
+            return songs[songUrl];
+        return songs[songUrl] = soundManager.createSound({
+            "id": songUrl,
+            "url": songUrl,
+            "stream": true,
+            "autoLoad": true,
+            "autoPlay": false,
+            "onfinish": finish,
+            "volume": 50
+        });
+    }
+
+    function finish() {
+    }
+
+    var song;
+    var songObject;
+    var wasPlaying = false;
+    update = function () {
+        var shouldBePlaying = enabled && focused && !!nextSong;
+        if (playing !== shouldBePlaying) {
+            if (playing) {
+                songObject.pause();
+            }
+        }
+        if (shouldBePlaying && nextSong !== song) {
+            songObject && songObject.stop();
+            playing = false;
+            wasPlaying = false;
+            song = nextSong;
+            songObject = load(song);
+        }
+        if (playing !== shouldBePlaying) {
+            if (shouldBePlaying) {
+                if (wasPlaying) {
+                    songObject.resume();
                 } else {
-                    if (playing) {
-                        song.pause();
-                        playing = false;
-                    }
+                    songObject.play();
+                    wasPlaying = true;
                 }
             }
         }
+        playing = shouldBePlaying;
+    };
 
-        Q.when(initialized.promise, function () {
-            $("#music").attr({
-                "class": "playing"
-            }).click(function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-                if (!muted) {
-                    $(this).attr({"class": "paused"});
-                } else {
-                    $(this).attr({"class": "playing"});
-                }
-                muted = !muted;
-                update();
-            });
-        });
+    update();
 
-        global.setMusicResponder(function (message) {
-            if (songId === message)
-                return;
-            if (song)
-                song.stop();
-            if (tunes[message]) {
-                song = tunes[message];
-            } else {
-                song = tunes[message] = soundManager.createSound({
-                    "id": message,
-                    "url": message,
-                    "loops": Infinity,
-                    "stream": true,
-                    "autoLoad": true,
-                    "autoPlay": false,
-                    "onfinish": function () {
-                        song && song.play();
-                    },
-                    "volume": 50
-                });
-            }
-            songId = message;
-            started = false;
-            update();
-            // display the music UI after the first song starts
-            initialized.resolve();
-        });
-
-    }
 });
 
 soundManager.beginDelayedInit();
