@@ -65,6 +65,7 @@ soundManager.onready(function () {
     }
 
     function finish() {
+	songObject && songObject.play();
     }
 
     var song;
