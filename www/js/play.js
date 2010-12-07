@@ -43,7 +43,6 @@ function initialSetup() {
         prompt = $("#prompt");
         commandLine = $("#command-line");
         commandLine.focus();
-        after();
         commandLine.keypress(function (event) {
             if (event.metaKey) {
                 socket.send(JSON.stringify({
@@ -274,15 +273,17 @@ function resetStatus(message) {
 var wasBottom = true;
 var tolerance = 10;
 function before() {
+    // save
     var at = $(document).scrollTop();
-    $(document).scrollTop(at + 1);
-    var below = $(document).scrollTop();
-    $(document).scrollTop(at - 1);
-    var above = $(document).scrollTop();
+    // measure
+    $(document).scrollTop(at + 100);
+    var lower = $(document).scrollTop();
+    // restore
     $(document).scrollTop(at);
-    wasBottom = at === below && at !== above;
+    wasBottom = lower - at < 100;
 }
 function after() {
+    console.log(wasBottom);
     if (wasBottom) {
         if (!commandLine)
             return;
