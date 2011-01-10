@@ -1,15 +1,20 @@
 
 1
 
+ * debug issue with music icon appearing when flash is not available
  * items and inventories
- * fix music replay bug
  * parameterize time color scheme on day time, face, and season
  * more world content
  * package.json for easy npm install
+ * prompt control, silent mode
+ * favicon: dynamically update pips of die
 
 2
 
- * progress indicator during loading
+ * HTML5 audio
+ * volume control, good default volume
+ * graceful reconnection of annonymous sessions
+ * log user sessions, especially locations and values of bad commands
 
 3
 
@@ -17,17 +22,23 @@
  * remote Q def node channels
  * agent AI
  * menus
+ * progress indicator during loading
 
 4
 
+ * s/ commands for fixing previous chats
  * skill tree
  * combat
 
 DONE
 
- * improve lazy loader
- * music
- * graceful reconnection
- * nauseating tale spin
  * room chat
+ * nauseating tale spin
+ * graceful reconnection
+ * music
+ * improve lazy loader
+ * fix music replay bug
+ * command-line clear flow on both sides for FF
+ * fix the content-length failures
+ * pending messages count in the page title
 

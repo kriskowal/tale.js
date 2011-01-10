@@ -140,6 +140,7 @@
         }
 
         #command-bar {
+            clear: both;
             border: none;
             border-spacing: 0;
             margin: 0;

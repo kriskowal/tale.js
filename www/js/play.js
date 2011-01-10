@@ -1,5 +1,9 @@
 (function (global, require) {
 
+if (typeof console === 'undefined') {
+    global.console = {log: function () {}};
+}
+
 var Q = require("q");
 var COLORS = require("tale/color-scheme");
 
@@ -18,12 +22,25 @@ $(window).click(function (event) {
     }
 });
 
+var focused = true;
+var missedMessages = 0;
+$(window).bind('blur', function () {
+    focused = false;
+    updateTitle();
+});
+$(window).bind('focus', function () {
+    focused = true;
+    missedMessages = 0;
+    updateTitle();
+});
+
 var responders = {
     "log": log,
     "css": css,
     "colors": colors,
     "time": time,
-    "mode": mode
+    "mode": mode,
+    "prompt": setPrompt
 };
 
 // arrange for music messages to be forwarded
@@ -240,6 +257,21 @@ function mode(mode) {
     after();
 }
 
+function setPrompt(prompt) {
+    $("#prompt").html(prompt.content);
+    $("#command-line").attr({
+        "type": prompt.silent ? "password" : "textbox"
+    });
+}
+
+function updateTitle() {
+    document.title = (
+        !focused && missedMessages ?
+        '(' + missedMessages + ') ' :
+        ''
+    ) + 'Tale';
+}
+
 // command line buffer
 var buffer = $("#buffer");
 function log(message) {
@@ -247,6 +279,9 @@ function log(message) {
     before();
     buffer.append(message);
     after();
+    if (!focused)
+        missedMessages++;
+    updateTitle();
     return message;
 }
 
@@ -283,7 +318,6 @@ function before() {
     wasBottom = lower - at < 100;
 }
 function after() {
-    console.log(wasBottom);
     if (wasBottom) {
         if (!commandLine)
             return;
